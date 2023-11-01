@@ -1,0 +1,20 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block body_block %}
+
+<a class="btn btn-primary mt-4" href="{% url 'blog:post_detail' pk=post.pk%}" align="left">Cancel</a>
+
+<div class="container">
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        <label for="{{ form.title.id_for_label }}" class="form-label">Title:</label></br>
+        {{form.title}}</br>
+        <label for="{{ form.text.id_for_label }}" class="form-label">Text:</label></br>
+        {{form.text}}</br>
+        <button class="btn btn-primary" name="update">Update</button>
+        <button class="btn btn-danger" name="delete">Delete</button>
+    </form>
+</div>
+
+{% endblock %}

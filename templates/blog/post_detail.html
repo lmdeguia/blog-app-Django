@@ -1,0 +1,104 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block body_block %}
+
+
+
+<span><img style="height: 60px; width: 60px; margin-right: 20px; margin-top: 10px;" class="img-thumbnail rounded-2" src="{{post.author.usermedia.profile_pic.url}}"><a href="{% url 'blog:profile_page' user=post.author%}"><strong>{{post.author}}</strong></a> posted on {{post.published_date}}</span>
+
+<h1>{{post.title}}</h1>
+
+<div class="container mt-5 mb-5">
+    <p>{{post.text}}</p>
+</div>
+
+
+
+<form method="post" class="mb-4">
+    {% csrf_token %}
+    {% if request.user == post.author %}
+        <a class="btn btn-primary" href="{% url 'blog:edit_post' pk=post.pk%}">Edit Post</a>
+        <button class="btn btn-danger" name="delete">Delete Post</button>
+    {% endif %}
+</form>
+
+{% if post.draft == False %}
+    <h2>Comments:</h2>
+    <div class="container mb-3">
+        {% if comments %}
+            {% for c in comments %}
+            <div class="rounded-3 mb-3" style="background-color:#eee6ce;">
+                <div class="container-fluid">
+                    <span>
+                        <img style="height: 60px; width: 60px; margin-right: 20px; margin-top: 10px;" class="rounded-5" src="{{c.author.usermedia.profile_pic.url}}"><a href="{% url 'blog:profile_page' user=c.author %}"><strong>{{c.author}}</strong></a> {{c.created_date}}
+                    </span>
+                    <div class="container mb-0">
+                        {% if c.replyto_id %}
+                            <div style="font-size:90%; margin-top: 5px; background-color: #f4f4f4;"> 
+                                <strong>Reply to @{{c.replyto_id.author}}</strong>: <em>{{c.replyto_text}}</em>
+                            </div>
+                        {% endif %}
+                        <p><pre><em>{{c.text}}</em></pre></br></p>
+                    </div>
+                    <div class="mt-0">
+                        {% if edit and c.pk == cpk%}
+                        <form method="post">
+                            {% csrf_token %}
+                            <label for="{{ update.text.id_for_label }}" class="form-label">Edit Comment Text:</label></br>
+                            {{update.text}}</br>
+                            <button class="btn btn-primary  mb-2" name="update_comment" value={{c.id}}>Update</button> 
+                            <a class="btn btn-primary  mb-2" href="{% url 'blog:post_detail' pk=post.pk%}">Cancel</a>                           
+                        </form>
+                    {% else %}
+                        <form method="post">
+                            {% csrf_token %}
+                                {% if replying and c.pk == cpk_target%}
+                                    <label for="{{ commentform.text.id_for_label }}" class="form-label">Reply to Comment:</label></br>
+                                    <div style="margin-bottom: 0px;">{{commentform.text}}</div></br>
+                                    <button class="btn btn-primary mt-0  mb-2" name="submit_reply" value={{c.id}}>Comment</button>
+                                    <a class="btn btn-primary" href="{% url 'blog:post_detail' pk=post.pk%}">Cancel</a>
+                                {% else %}
+                                    <button class="btn btn-primary mb-2" name="reply_comment" value="{{c.id}}, {{c.author}}">Reply</button>
+                                {% endif %}
+                                {% if  request.user == c.author%}
+                                    <button class="btn btn-primary mb-2" name="edit_comment" value={{c.id}}>Edit Comment</button>
+                                    <button class="btn btn-danger mb-2" name="del_comment" value={{c.id}}>Delete Comment</button>
+                                {% endif %}
+                        </form>
+                    {% endif %}
+                    </div>
+                </div>
+              </div>
+            {% endfor %}
+        {% else %}
+            <p><strong>No Comments</strong></p>
+        {% endif %} 
+    </div>
+{% endif %}
+
+{% if not request.user.is_anonymous %}
+    {% if post.draft == False %}
+        <form method="post" class="mb-4">
+            {% csrf_token %}
+            <label for="{{ form.text.id_for_label }}" class="form-label">Reply to Post:</label></br>
+            <div style="margin-bottom: 0px;">{{form.text}}</div></br>
+            <button class="btn btn-primary mt-0" name="comment">Comment</button>
+        </form>
+    {% else %}
+        <form method="post" class="mb-3">
+            {% csrf_token %}
+            <button class="btn btn-primary" name="publish">Publish</button>
+            {% if request.user == post.author %}
+                <button class="btn btn-primary" name="edit">Edit Draft</button>
+                <button class="btn btn-danger" name="delete">Delete Draft</button>
+            {% endif %}
+        </form>
+    {% endif %}
+{% else %}
+    <h2>Hello Lurker</h2>
+    <h4>No post privilages for you.</h4>
+{% endif %}
+
+
+{% endblock %}

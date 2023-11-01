@@ -1,0 +1,21 @@
+{% extends 'blog/base.html' %}
+
+
+{% block body_block %}
+
+<form method="post">
+    {% csrf_token %}
+    <label for="{{ post_form.title.id_for_label }}" class="form-label">Title:</label></br>
+    {{post_form.title}}</br>
+    <label for="{{ post_form.text.id_for_label }}" class="form-label">Text:</label></br>
+    {{post_form.text}}</br>
+    <!-- <input type="submit" name="" value="Post" class="btn btn-primary mt-3"> -->
+    <button class="btn btn-primary" name="publish">Publish</button>
+    <button class="btn btn-primary" name="draft">Save As Draft</button>
+</form>
+<!-- <form method="post">
+    {% csrf_token %}
+    <input type="submit" name="" value="Save As Draft" class="btn btn-primary mt-3">
+</form> -->
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block body_block %}
+
+<div class="container mt-3">
+    {% if post %}
+
+        {% for p in post %}
+            <h1><a href="{% url 'blog:post_detail' pk=p.pk %}">{{p.title}}</a></h1>
+            <p>Author: {{p.author}}</p>
+        {% endfor %}
+
+    {% endif %}
+
+</div>
+
+
+{% endblock %}

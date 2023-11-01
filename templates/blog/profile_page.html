@@ -1,0 +1,31 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block body_block %}
+
+
+<span>
+<img style="height: 100px; width: 100px; margin-right: 20px; margin-top: 10px;" class="img-thumbnail rounded-2" src="{{user.usermedia.profile_pic.url}}">
+<h1>Profile Page for {{user}}</h1>
+</span>
+
+<h2>Post History</h2>
+
+
+
+{% for p in posts %}
+    <h3><a href="{% url 'blog:post_detail' pk=p.pk %}">{{p.title}}</a></h3>
+    <p>Posted On: {{p.published_date}}</p>
+{% endfor %}
+
+
+<h2>Comment History</h2>
+
+
+{% for c in comments %}
+    <strong><a href="{% url 'blog:post_detail' pk=c.pk %}"></a>Created On: {{c.created_date}}</a></strong>
+    <p>{{c.text}}</p>
+{% endfor %}
+
+
+{% endblock %}
